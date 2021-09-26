@@ -264,9 +264,9 @@
     const userCount = document.querySelector('#user-count')
     userCount.innerHTML = `上線使用者(${onlineUser.length})`
     const onlineUserList = document.querySelector('#onlineUserList')
-    let onlineHTML = "";
+    let onlineHTML = ""
     onlineUserList.innerHTML = onlineHTML
-    const item2 = document.createElement('li');
+    const item2 = document.createElement('li')
     item2.classList.add('list-group')
     for (let i = 0; i < onlineUser.length; i++) {
       onlineHTML += `<li class="online-user list-group-item">
@@ -291,8 +291,7 @@
 
 
   //本人送出訊息
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
+  form.addEventListener('submit', function () {
     if (input.value) {
       var item = document.createElement('li');
       let rawHTML = "";

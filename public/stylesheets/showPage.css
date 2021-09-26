@@ -1952,6 +1952,7 @@ color: #657786;
 
 .name-account-message .name-account{
  display: flex;
+ padding: 0;
 }
 
 .name-account-message .name-account a{
@@ -1989,6 +1990,7 @@ font-weight: 500;
 font-size: 15px;
 line-height: 22px;
 color: #657786;
+word-break: break-all;
 }
 
 .message .time{
@@ -1999,7 +2001,20 @@ font-size: 15px;
 line-height: 22px;
 text-align: right;
 color: #657786;
-width:100%;
+/* width:100%; */
+}
+
+.name-account-message .time{
+  font-family: Noto Sans TC;
+font-style: normal;
+font-weight: 500;
+font-size: 15px;
+line-height: 22px;
+text-align: right;
+color: #657786;
+    position: absolute;
+    right: 0;
+/* width:auto; */
 }
 
 .chat-text-title {

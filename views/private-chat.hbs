@@ -105,9 +105,9 @@
 
       <hr style="margin:0; padding:0">
 
-      <ul class="list-group">
+      <ul class="list-group" id="msgList">
         {{!-- 訊息A開始 --}}
-        <li class="message list-group-item">
+        {{!-- <li class="message list-group-item">
           <div class="avatar">
             <a href="/messages/25">
               <img src="https://loremflickr.com/320/240/boy/?lock=23" alt="">
@@ -127,13 +127,12 @@
               訊息在這
             </div>
           </div>
-
         </li>
-        <hr style="margin:0; padding:0">
+        <hr style="margin:0; padding:0"> --}}
         {{!-- 訊息A結束 --}}
 
         {{!-- 訊息B開始 --}}
-        <li class="message list-group-item">
+        {{!-- <li class="message list-group-item">
           <div class="avatar">
             <a href="">
               <img src="https://loremflickr.com/320/240/boy/?lock=23" alt="">
@@ -155,7 +154,7 @@
           </div>
 
         </li>
-        <hr style="margin:0; padding:0">
+        <hr style="margin:0; padding:0"> --}}
         {{!-- 訊息B結束 --}}
       </ul>
 
@@ -164,10 +163,14 @@
     </div>
 
     {{!-- 右側欄位 --}}
+    {{#ifCond currentUser.id viewUserId}}
+    <div class="right-side col-md-5" style="padding:0; height:100%;">
+    </div>
+    {{else}}
     <div class="right-side col-md-5" style="padding:0; height:100%;">
       <div class="chat-text-title">
         <div class="name">{{viewUser.name}}</div>
-        <div class="account">{{ viewUser.account }}</div>
+        <div class="account">@{{viewUser.account}}</div>
       </div>
       <hr style="max-width: 673px;">
       <div class="chat">
@@ -263,6 +266,8 @@
       </div>
 
     </div>
+    {{/ifCond}}
+
   </div>
 </div>
 
@@ -288,10 +293,50 @@
   const priNote = document.getElementById("priNote");
   let redDot = 0
 
+
+  //使用者最後訊息更新
+  socket.on('renderMsgBox', function (msgInBox) {
+    const msgList = document.querySelector('#msgList')
+    let msgHTML = ""
+    let time = new Date().toLocaleTimeString()
+    msgList.innerHTML = msgHTML
+    const item = document.createElement('li')
+    item.classList.add('list-group')
+    for (let i = 0; i < msgInBox.length; i++) {
+      msgHTML += `
+       <a href="/messages/${msgInBox[i].toId}">
+      <li class="message list-group-item">
+          <div class="avatar">
+              <img src="${msgInBox[i].User.avatar}" alt="">
+          </div>
+          <div class="name-account-message col-md-12">
+            <div class="name-account col-md-12">
+                <div class="name">${msgInBox[i].User.name}</div>
+                <div class="account">@${msgInBox[i].User.account}</div>
+              <div class="time">
+                ${time}
+              </div>
+            </div>
+            <div class="message">
+              ${msgInBox[i].content}
+            </div>
+          </div>
+        </li>
+         </a>
+        <hr style="margin:0; padding:0">`
+    }
+    item.innerHTML = msgHTML;
+    msgList.appendChild(item);
+  })
+
+
   //登入傳當前使用者資料
   window.addEventListener('load', function sendUser() {
     let roomName = "{{ roomName }}"
+    const currentId = "{{ user.id }}"
     socket.emit('join private room', roomName)
+    socket.emit('msg-inbox', currentId)
+    console.log('123')
     scrollWindow();
   })
 
@@ -321,7 +366,6 @@
       const currentName = "{{ currentUser.name }}"
       const viewUserId = "{{ viewUser.id }}"
       socket.emit('private-chat', input.value, currentId, currentAvatar, viewUserId);
-      socket.emit('msg-inbox', input.value, currentId, currentAvatar, currentAccount, currentName, viewUserId)
       input.value = ''
     }
   })

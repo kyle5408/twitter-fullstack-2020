@@ -70,36 +70,24 @@ io.on('connection', (socket) => {
   //私人聊天
   socket.on('join private room', (roomName) => {
     socket.join(roomName);
-    console.log('join===========', roomName)
 
     socket.on('private-chat', (msg, currentId, currentAvatar, viewUserId) => {
-      console.log("回傳成功===========", msg)
       //存進資料庫
       const user = { id: currentId, msg: msg }
       messageController.sendMsg(user, roomName, viewUserId)
-      console.log('傳進私人聊天室===========', roomName)
       socket.to(roomName).emit('private chat message', msg, currentId, currentAvatar);
       socket.broadcast.to(roomName).emit('noteHer');
     })
+
+    //每位使用者最後訊息
+    socket.on('msg-inbox', async (currentId) => {
+      const msgInbox = await messageController.getPrivateInbox(currentId)
+      // console.log('msg',msgInbox)
+      io.emit('renderMsgBox', msgInbox)
+    })
   })
 
-  //私人通知
-  socket.on('msg-inbox', async (msg, currentId, currentAvatar, currentAccount, currentName, viewUserId) => {
-    console.log('currentId',currentId)
-    console.log('viewUserId', viewUserId)
-    const lastestMsg = { currentAvatar, currentAccount, currentName, msg }
-    //從資料庫抓改使用者所有接收訊息 by使用者篩選各一筆
-    // let roomName = currentId > viewUserId ? `${viewUserId}-${currentId}` : `${currentId}-${viewUserId}`
-    const msgInbox = await messageController.getPrivateInbox(currentId)
-    console.log('app',msgInbox)
-    // msgInbox.map(d => d.currentAccount).includes(lastestMsg.currentAccount)
-    // if (msgInbox.currentAccount) {
-      //假如有資料，刪掉舊的再加入陣列
 
-    // }
-    //沒資料，直接加入陣列
-
-  })
 
 
 });

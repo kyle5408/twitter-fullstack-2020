@@ -125,10 +125,12 @@ router.get('/messages', authenticated, messageController.publicPage);
 //即時通訊(私人聊天)
 router.get('/messages/:id', authenticated, messageController.privatePage)
 
-//訂閱通知頁面
+//通知頁面
 router.get('/subscribe/:id', authenticated, messageController.subscribe)
 //新增訂閱
 router.post('/subscribe/:id', authenticated, messageController.subscription)
+//取消訂閱
+router.delete('/subscribe/:id', authenticated, messageController.removeSubscribe)
 
 //註冊
 router.get('/signup', userController.signUpPage)

@@ -103,7 +103,10 @@ const messageController = {
   const currentUser = helpers.getUser(req)
   try{
   //中間資料大戰
-    
+    const data = await Subscribe.findAll({
+      where: {fansId:currentUser.id},
+      include:[{ model: User, as: 'InfluenceLinks' }]
+    })
 
   //追蹤者
     const users = await Followship.findAll({
@@ -174,6 +177,20 @@ const messageController = {
     catch (err) {
       console.log(err)
     }
+ },
+
+ //取消訂閱
+ removeSubscribe:(req, res) => {
+  const currentUserId = helpers.getUser(req).id
+  return Subscribe.destroy({
+    where:{
+      fansId: currentUserId,
+      InfluencerId: req.params.id
+    }
+  })
+  .then(() => {
+    return res.redirect('back')
+  })
  }
 
 }
